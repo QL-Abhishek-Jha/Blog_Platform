@@ -1,0 +1,4529 @@
+{
+  "info": {
+    "_postman_id": "81aeb205-d5d7-474c-adbe-62c8119b0f3d",
+    "name": "Blog Platform API",
+    "description": "Complete API collection for Blog Platform. Base URL: http://localhost:8000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52559958",
+    "_collection_link": "https://go.postman.co/collection/52559958-81aeb205-d5d7-474c-adbe-62c8119b0f3d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"user1\",\n    \"email\": \"user1@example.com\",\n    \"password\": \"StrongPass123\",\n    \"confirm_password\": \"StrongPass123\",\n    \"first_name\": \"User\",\n    \"last_name\": \"One\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "1. Register",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"username\": \"user1\",\n    \"email\": \"user1@example.com\",\n    \"password\": \"StrongPass123\",\n    \"confirm_password\": \"StrongPass123\",\n    \"first_name\": \"User\",\n    \"last_name\": \"One\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/register/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:45:36 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "49"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Registration successful\",\n    \"user_id\": 7\n}"
+            }
+          ]
+        },
+        {
+          "name": "2. Login as user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Uses: access_token, refresh_token",
+                  "// After this runs — access_token and refresh_token are saved for user1",
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "    pm.collectionVariables.set('access_token', json.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', json.refresh_token);",
+                  "    console.log('Saved: access_token and refresh_token for user1');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user1@example.com\",\n    \"password\": \"StrongPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "2. Login as user",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"user1@example.com\",\n    \"password\": \"StrongPass123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:46:17 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "559"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMzg3Njc3LCJpYXQiOjE3NzMzODQzNzcsImp0aSI6IjA3YzM5MmVhYTBhMDQzNWVhZDA2MDk2N2RmMTFiNGJmIiwidXNlcl9pZCI6IjcifQ.M1rIvAdnNboLWnyb8eRSzitUzNin05pFDgwkhSLOAm0\",\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3Mzk4OTE3NywiaWF0IjoxNzczMzg0Mzc3LCJqdGkiOiI1MzRkNDI4MjE5MDI0OWZmOWEwMmE2ZjYzMWQ0ODQxMiIsInVzZXJfaWQiOiI3In0.O6ep2WL4a4Epwe0paY6yVHUlzl8P_WPKnZpEtZVGv1U\",\n    \"user\": {\n        \"id\": 7,\n        \"email\": \"user1@example.com\",\n        \"role\": \"user\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "3. Login as author",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Uses: access_token, refresh_token",
+                  "// After this runs — access_token and refresh_token are overwritten for author1",
+                  "// Use this token for all Author - Own Blog Management requests",
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "    pm.collectionVariables.set('access_token', json.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', json.refresh_token);",
+                  "    console.log('Saved: access_token and refresh_token for author1');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"author@mail.com\",\n    \"password\": \"StrongPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "3. Login as author",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"author@mail.com\",\n    \"password\": \"StrongPass123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:47:07 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "559"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMzg3NzI3LCJpYXQiOjE3NzMzODQ0MjcsImp0aSI6IjhiZGY4NDQ4ZTEwMjRiYTQ4ZjlmMjRmOGZjNzVmZGQyIiwidXNlcl9pZCI6IjUifQ.vLYUc3BvVtKsYcI1wtR3sLwZAgr-dElN3LxlRuEfu6Y\",\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3Mzk4OTIyNywiaWF0IjoxNzczMzg0NDI3LCJqdGkiOiJlOGZmZDgzOWQwYWM0ZTRhODZlZGY1MTE0MWQ4ZmM4MSIsInVzZXJfaWQiOiI1In0.9fYzHIUseIO00Ms6JbJ3LLhAsQ7CtnHfKIDlkCtL4Ps\",\n    \"user\": {\n        \"id\": 5,\n        \"email\": \"author@mail.com\",\n        \"role\": \"author\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "4. Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Uses: admin_access_token, admin_refresh_token",
+                  "// After this runs — admin_access_token and admin_refresh_token are saved for adnin",
+                  "// Use this token for all Admin - User Management and Admin - Blog Management requests",
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "    pm.collectionVariables.set('admin_access_token', json.access_token);",
+                  "    pm.collectionVariables.set('admin_refresh_token', json.refresh_token);",
+                  "    console.log('Saved: admin_access_token and admin_refresh_token for adnin');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@mail.com\",\n    \"password\": \"StrongPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "4. Login as admin",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"admin@mail.com\",\n    \"password\": \"StrongPass123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:48:19 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "557"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMzg3Nzk5LCJpYXQiOjE3NzMzODQ0OTksImp0aSI6ImNlMjRlYjk1ZjY5YjRmOGNiMzk1ZmJkZjBlMmZmNTg2IiwidXNlcl9pZCI6IjMifQ.OK23dhZH7HcHUBte7UF4u1uFj08BiBF3FlYpmH8MphI\",\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3Mzk4OTI5OSwiaWF0IjoxNzczMzg0NDk5LCJqdGkiOiJjZWFhMjI5MTcyYzU0ZjQ5YTliNzA4OGM3MTBhZTc1OCIsInVzZXJfaWQiOiIzIn0.4mAhHBUxq3EUuO5W84sWvT5IUIdEnuT6LxWGiN4F-xk\",\n    \"user\": {\n        \"id\": 3,\n        \"email\": \"admin@mail.com\",\n        \"role\": \"admin\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "5. Login as superadmin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Uses: superadmin_access_token, superadmin_refresh_token",
+                  "// After this runs — superadmin_access_token and superadmin_refresh_token are saved for root",
+                  "// Use this token only for Superadmin requests",
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "    pm.collectionVariables.set('superadmin_access_token', json.access_token);",
+                  "    pm.collectionVariables.set('superadmin_refresh_token', json.refresh_token);",
+                  "    console.log('Saved: superadmin_access_token and superadmin_refresh_token for root');",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"root@root.com\",\n    \"password\": \"root\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "5. Login as superadmin",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"root@root.com\",\n    \"password\": \"root\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:48:36 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "556"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMzg3ODE2LCJpYXQiOjE3NzMzODQ1MTYsImp0aSI6IjlkMjIxMTNiZGMxMjRmNGZiMjFlOTU2ODUyMmNjNzMzIiwidXNlcl9pZCI6IjEifQ.GGtCuWEl_v2pYBR-7x7dzR0NYOIhkDaipHJgozw06k8\",\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3Mzk4OTMxNiwiaWF0IjoxNzczMzg0NTE2LCJqdGkiOiIzY2FlOGExNDE1NWY0ZDdhYWEyYjdmOGJhZWYwMjBiYyIsInVzZXJfaWQiOiIxIn0.bwGpXdAhyzzXxDyZ5QbWWPc9paPBVeGeFwuZZZN3fl8\",\n    \"user\": {\n        \"id\": 1,\n        \"email\": \"root@root.com\",\n        \"role\": \"admin\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "6. Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "6. Logout",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/logout/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:49:03 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "37"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Logged out successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "7. Token Refresh",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Uses: refresh_token (sends it) → saves new access_token and refresh_token",
+                  "var json = pm.response.json();",
+                  "if (json.access_token) {",
+                  "    pm.collectionVariables.set('access_token', json.access_token);",
+                  "    pm.collectionVariables.set('refresh_token', json.refresh_token);",
+                  "    console.log('Refreshed: access_token and refresh_token updated');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/token/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "token",
+                "refresh",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "7. Token Refresh",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/token/refresh/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "token",
+                    "refresh",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:51:45 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "559"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzczMzg4MDA1LCJpYXQiOjE3NzMzODQ3MDUsImp0aSI6IjIxYTVhZThjZGUzNTQ1YzRhMDdlNDA1MjQ5Y2M1MjkxIiwidXNlcl9pZCI6IjcifQ.mZCdMsm26GyoiGxvNrvhDUDvzv_NeBqXDLHofjwTkBU\",\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3Mzk4OTUwNSwiaWF0IjoxNzczMzg0NzA1LCJqdGkiOiIwYTNkNWRlODNkYTM0MjFjODRiNzk1M2U3MzViMDcxOSIsInVzZXJfaWQiOiI3In0.8w6tzxtpWp1lyTO1ehFHC4snsxy5ILTrZ5WyqQSWgJA\",\n    \"user\": {\n        \"id\": 7,\n        \"email\": \"user1@example.com\",\n        \"role\": \"user\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "8. Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"old_password\": \"StrongPass123\",\n    \"new_password\": \"NewPass456\",\n    \"confirm_new_password\": \"NewPass456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/change-password/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "change-password",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "8. Change Password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"old_password\": \"StrongPass123\",\n    \"new_password\": \"NewPass456\",\n    \"confirm_new_password\": \"NewPass456\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/change-password/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "change-password",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:52:08 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "43"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Password changed successfully\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "9. Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"user1@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/forgot-password/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "9. Forgot Password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"user1@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/forgot-password/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "forgot-password",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:53:29 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "100"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"If this email is registered, a password reset link has been sent. Check your terminal.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "10. Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"password\": \"FreshPass789\",\n    \"confirm_password\": \"FreshPass789\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/reset-password/:uid/:token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password",
+                ":uid",
+                ":token",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "uid",
+                  "value": "PASTE_UID_FROM_TERMINAL"
+                },
+                {
+                  "key": "token",
+                  "value": "PASTE_TOKEN_FROM_TERMINAL"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "10. Reset Password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"password\": \"FreshPass789\",\n    \"confirm_password\": \"FreshPass789\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/reset-password/Nw/d5dp35-06d1ca8761a1e6256882fb2f7a192a55/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "reset-password",
+                    "Nw",
+                    "d5dp35-06d1ca8761a1e6256882fb2f7a192a55",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:54:09 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "56"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Password reset successfully. Please login.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "User Profile and Subscriptions",
+      "item": [
+        {
+          "name": "11. My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "11. My Profile",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/users/me/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:56:09 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "238"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 7,\n    \"username\": \"user1\",\n    \"email\": \"user1@example.com\",\n    \"first_name\": \"User\",\n    \"last_name\": \"One\",\n    \"role\": \"user\",\n    \"bio\": \"\",\n    \"profile_pic\": null,\n    \"is_active\": true,\n    \"created_at\": \"2026-03-13T06:45:36.133899Z\",\n    \"updated_at\": \"2026-03-13T06:55:31.755224Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "12. Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"first_name\": \"User\",\n    \"bio\": \"I am user1 and I love reading blogs.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "12. Update My Profile",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"first_name\": \"User1\",\n    \"bio\": \"I am user1 and I love reading blogs.\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/users/me/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "me",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:56:30 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "275"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 7,\n    \"username\": \"user1\",\n    \"email\": \"user1@example.com\",\n    \"first_name\": \"User1\",\n    \"last_name\": \"One\",\n    \"role\": \"user\",\n    \"bio\": \"I am user1 and I love reading blogs.\",\n    \"profile_pic\": null,\n    \"is_active\": true,\n    \"created_at\": \"2026-03-13T06:45:36.133899Z\",\n    \"updated_at\": \"2026-03-13T06:56:30.156739Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "13. Public Author Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/authors/:username/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "authors",
+                ":username",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "username",
+                  "value": "author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "13. Public Author Profile",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/authors/:username/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "authors",
+                    ":username",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "username",
+                      "value": "author1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:57:17 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "98"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 5,\n    \"username\": \"author1\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"author\",\n    \"bio\": \"\",\n    \"profile_pic\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "14. Subscribe to Author",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/subscribe/:username/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "subscribe",
+                ":username",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "username",
+                  "value": "author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "14. Subscribe to Author",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/users/subscribe/:username/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "subscribe",
+                    ":username",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "username",
+                      "value": "author1"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:57:40 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "POST, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "35"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Subscribed to author1\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "15. Unsubscribe from Author",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/unsubscribe/:username/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "unsubscribe",
+                ":username",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "username",
+                  "value": "author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "15. Unsubscribe from Author",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/users/unsubscribe/:username/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "unsubscribe",
+                    ":username",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "username",
+                      "value": "author1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:58:00 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "DELETE, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "39"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Unsubscribed from author1\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "16. My Subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/my-subscriptions/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "my-subscriptions",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "16. My Subscriptions",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/users/my-subscriptions/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "my-subscriptions",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:58:28 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "137"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 5,\n        \"subscriber\": 7,\n        \"subscriber_username\": \"user1\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"created_at\": \"2026-03-13T06:58:24.706709Z\"\n    }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin - User Management",
+      "item": [
+        {
+          "name": "17. List All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "17. List All Users",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 06:59:50 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1461"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 7,\n        \"username\": \"user1\",\n        \"email\": \"user1@example.com\",\n        \"first_name\": \"User1\",\n        \"last_name\": \"One\",\n        \"role\": \"user\",\n        \"bio\": \"I am user1 and I love reading blogs.\",\n        \"profile_pic\": null,\n        \"is_active\": true,\n        \"created_at\": \"2026-03-13T06:45:36.133899Z\",\n        \"updated_at\": \"2026-03-13T06:56:30.156739Z\"\n    },\n    {\n        \"id\": 5,\n        \"username\": \"author1\",\n        \"email\": \"author@mail.com\",\n        \"first_name\": \"Test\",\n        \"last_name\": \"author\",\n        \"role\": \"author\",\n        \"bio\": \"\",\n        \"profile_pic\": null,\n        \"is_active\": true,\n        \"created_at\": \"2026-03-12T10:09:19.949104Z\",\n        \"updated_at\": \"2026-03-13T06:57:06.752611Z\"\n    },\n    {\n        \"id\": 4,\n        \"username\": \"user2\",\n        \"email\": \"user2@mail.com\",\n        \"first_name\": \"Test\",\n        \"last_name\": \"user2\",\n        \"role\": \"user\",\n        \"bio\": \"\",\n        \"profile_pic\": null,\n        \"is_active\": true,\n        \"created_at\": \"2026-03-12T10:08:53.201891Z\",\n        \"updated_at\": \"2026-03-12T10:21:08.326974Z\"\n    },\n    {\n        \"id\": 3,\n        \"username\": \"adnin\",\n        \"email\": \"admin@mail.com\",\n        \"first_name\": \"Test\",\n        \"last_name\": \"admin\",\n        \"role\": \"admin\",\n        \"bio\": \"\",\n        \"profile_pic\": null,\n        \"is_active\": true,\n        \"created_at\": \"2026-03-12T10:08:34.677875Z\",\n        \"updated_at\": \"2026-03-13T06:47:51.917481Z\"\n    },\n    {\n        \"id\": 2,\n        \"username\": \"user\",\n        \"email\": \"user@mail.com\",\n        \"first_name\": \"Test\",\n        \"last_name\": \"User\",\n        \"role\": \"user\",\n        \"bio\": \"\",\n        \"profile_pic\": null,\n        \"is_active\": true,\n        \"created_at\": \"2026-03-12T10:08:08.387461Z\",\n        \"updated_at\": \"2026-03-12T10:08:08.387461Z\"\n    },\n    {\n        \"id\": 1,\n        \"username\": \"root\",\n        \"email\": \"root@root.com\",\n        \"first_name\": \"\",\n        \"last_name\": \"\",\n        \"role\": \"admin\",\n        \"bio\": \"\",\n        \"profile_pic\": null,\n        \"is_active\": true,\n        \"created_at\": \"2026-03-12T10:02:09.757926Z\",\n        \"updated_at\": \"2026-03-12T10:02:09.757926Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "18. User Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/:user_id/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                ":user_id",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "18. User Detail",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users/:user_id/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    ":user_id",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "user_id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:00:35 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, DELETE, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "275"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 7,\n    \"username\": \"user1\",\n    \"email\": \"user1@example.com\",\n    \"first_name\": \"User1\",\n    \"last_name\": \"One\",\n    \"role\": \"user\",\n    \"bio\": \"I am user1 and I love reading blogs.\",\n    \"profile_pic\": null,\n    \"is_active\": true,\n    \"created_at\": \"2026-03-13T06:45:36.133899Z\",\n    \"updated_at\": \"2026-03-13T06:56:30.156739Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "19. Promote User to Author",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"author\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/:user_id/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                ":user_id",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "19. Promote User to Author",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"role\": \"author\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users/:user_id/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    ":user_id",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "user_id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:01:04 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, DELETE, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "277"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 7,\n    \"username\": \"user1\",\n    \"email\": \"user1@example.com\",\n    \"first_name\": \"User1\",\n    \"last_name\": \"One\",\n    \"role\": \"author\",\n    \"bio\": \"I am user1 and I love reading blogs.\",\n    \"profile_pic\": null,\n    \"is_active\": true,\n    \"created_at\": \"2026-03-13T06:45:36.133899Z\",\n    \"updated_at\": \"2026-03-13T07:01:04.496056Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "20. Deactivate User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"is_active\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/:user_id/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                ":user_id",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "20. Deactivate User",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"is_active\": false\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users/:user_id/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    ":user_id",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "user_id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:02:33 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, DELETE, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "276"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 7,\n    \"username\": \"user1\",\n    \"email\": \"user1@example.com\",\n    \"first_name\": \"User1\",\n    \"last_name\": \"One\",\n    \"role\": \"user\",\n    \"bio\": \"I am user1 and I love reading blogs.\",\n    \"profile_pic\": null,\n    \"is_active\": false,\n    \"created_at\": \"2026-03-13T06:45:36.133899Z\",\n    \"updated_at\": \"2026-03-13T07:02:33.191058Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "21. Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/:user_id/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                ":user_id",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "user_id",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "21. Delete User",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users/:user_id/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    ":user_id",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "user_id",
+                      "value": "7"
+                    }
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:03:17 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, DELETE, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "0"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Superadmin",
+      "item": [
+        {
+          "name": "22. Create Admin Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{superadmin_access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"adnin\",\n    \"email\": \"admin@mail.com\",\n    \"password\": \"StrongPass123\",\n    \"confirm_password\": \"StrongPass123\",\n    \"first_name\": \"Admin\",\n    \"last_name\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/superadmin/create-admin/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "superadmin",
+                "create-admin",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Topics",
+      "item": [
+        {
+          "name": "23. List All Topics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/topics/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "topics",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "23. List All Topics",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/topics/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "topics",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:08:18 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, POST, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "371"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 2,\n        \"name\": \"Lifestyle\",\n        \"slug\": \"lifestyle\",\n        \"created_by\": 5,\n        \"created_by_username\": \"author1\",\n        \"created_at\": \"2026-03-12T10:31:28.046309Z\",\n        \"updated_at\": \"2026-03-12T10:31:28.046309Z\"\n    },\n    {\n        \"id\": 1,\n        \"name\": \"Tech & Programming\",\n        \"slug\": \"technology\",\n        \"created_by\": 5,\n        \"created_by_username\": \"author1\",\n        \"created_at\": \"2026-03-12T10:31:06.871280Z\",\n        \"updated_at\": \"2026-03-12T10:37:05.529462Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "24. Create Topic",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Technology\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/blogs/topics/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "topics",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "24. Create Topic",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Technologyss\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/topics/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "topics",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:09:27 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, POST, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "185"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 5,\n    \"name\": \"Technologyss\",\n    \"slug\": \"technologyss\",\n    \"created_by\": 5,\n    \"created_by_username\": \"author1\",\n    \"created_at\": \"2026-03-13T07:09:27.514846Z\",\n    \"updated_at\": \"2026-03-13T07:09:27.514846Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "25. Topic Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/topics/:slug/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "topics",
+                ":slug",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "technology"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "25. Topic Detail",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/topics/:slug/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "topics",
+                    ":slug",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "technology"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:11:14 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, DELETE, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "189"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 1,\n    \"name\": \"Tech & Programming\",\n    \"slug\": \"technology\",\n    \"created_by\": 5,\n    \"created_by_username\": \"author1\",\n    \"created_at\": \"2026-03-12T10:31:06.871280Z\",\n    \"updated_at\": \"2026-03-12T10:37:05.529462Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "26. Update Topic",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Tech and Innovation\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/blogs/topics/:slug/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "topics",
+                ":slug",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "technology"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "26. Update Topic",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Tech and Innovation\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/topics/:slug/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "topics",
+                    ":slug",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "technology"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:11:44 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, DELETE, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "190"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 1,\n    \"name\": \"Tech and Innovation\",\n    \"slug\": \"technology\",\n    \"created_by\": 5,\n    \"created_by_username\": \"author1\",\n    \"created_at\": \"2026-03-12T10:31:06.871280Z\",\n    \"updated_at\": \"2026-03-13T07:11:44.305412Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "27. Delete Topic",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/topics/:slug/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "topics",
+                ":slug",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "technology"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "27. Delete Topic",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/topics/:slug/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "topics",
+                    ":slug",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "technology"
+                    }
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:12:16 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, DELETE, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "0"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Author - Own Blog Management",
+      "item": [
+        {
+          "name": "28. List My Blogs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/my-blogs/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "my-blogs",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "28. List My Blogs",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/my-blogs/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "my-blogs",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:12:40 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, POST, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "525"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 3,\n        \"title\": \"Published Blog Post\",\n        \"slug\": \"published-blog-post\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": null,\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-12T10:48:31.056587Z\",\n        \"view_count\": 2,\n        \"created_at\": \"2026-03-12T10:48:31.058589Z\"\n    },\n    {\n        \"id\": 2,\n        \"title\": \"My seoncd Blog Post\",\n        \"slug\": \"my-seoncd-blog-post\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": 2,\n        \"topic_name\": \"Lifestyle\",\n        \"banner_image\": null,\n        \"is_published\": false,\n        \"published_at\": null,\n        \"view_count\": 0,\n        \"created_at\": \"2026-03-12T10:46:48.349063Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "29. Create Blog as Draft",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"My First Blog by author1\",\n    \"content\": \"This is the content written by author1.\",\n    \"topic\": 1,\n    \"is_published\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/blogs/my-blogs/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "my-blogs",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "29. Create Blog as Draft",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"title\": \"My First Blog by author1\",\n    \"content\": \"This is the content written by author1.\",\n    \"topic\": 5,\n    \"is_published\": false\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/my-blogs/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "my-blogs",
+                    ""
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:13:42 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, POST, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "368"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 4,\n    \"title\": \"My First Blog by author1\",\n    \"slug\": \"my-first-blog-by-author1\",\n    \"content\": \"This is the content written by author1.\",\n    \"author\": 5,\n    \"author_username\": \"author1\",\n    \"topic\": 5,\n    \"topic_name\": \"Technologyss\",\n    \"banner_image\": null,\n    \"is_published\": false,\n    \"published_at\": null,\n    \"view_count\": 0,\n    \"created_at\": \"2026-03-13T07:13:42.297303Z\",\n    \"updated_at\": \"2026-03-13T07:13:42.297303Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "30. Own Blog Detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/my-blogs/:slug/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "my-blogs",
+                ":slug",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "my-first-blog-by-author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "30. Own Blog Detail",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/my-blogs/:slug/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "my-blogs",
+                    ":slug",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "my-first-blog-by-author1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:15:15 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "368"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 4,\n    \"title\": \"My First Blog by author1\",\n    \"slug\": \"my-first-blog-by-author1\",\n    \"content\": \"This is the content written by author1.\",\n    \"author\": 5,\n    \"author_username\": \"author1\",\n    \"topic\": 5,\n    \"topic_name\": \"Technologyss\",\n    \"banner_image\": null,\n    \"is_published\": false,\n    \"published_at\": null,\n    \"view_count\": 0,\n    \"created_at\": \"2026-03-13T07:13:42.297303Z\",\n    \"updated_at\": \"2026-03-13T07:13:42.297303Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "31. Publish Draft Blog",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"is_published\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/blogs/my-blogs/:slug/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "my-blogs",
+                ":slug",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "my-first-blog-by-author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "31. Publish Draft Blog",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"is_published\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/my-blogs/:slug/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "my-blogs",
+                    ":slug",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "my-first-blog-by-author1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:16:02 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, PATCH, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "392"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 4,\n    \"title\": \"My First Blog by author1\",\n    \"slug\": \"my-first-blog-by-author1\",\n    \"content\": \"This is the content written by author1.\",\n    \"author\": 5,\n    \"author_username\": \"author1\",\n    \"topic\": 5,\n    \"topic_name\": \"Technologyss\",\n    \"banner_image\": null,\n    \"is_published\": true,\n    \"published_at\": \"2026-03-13T07:16:02.097328Z\",\n    \"view_count\": 0,\n    \"created_at\": \"2026-03-13T07:13:42.297303Z\",\n    \"updated_at\": \"2026-03-13T07:16:02.098356Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Public Blogs",
+      "item": [
+        {
+          "name": "32. List All Published Blogs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "32. List All Published Blogs",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:16:34 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "562"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 4,\n        \"title\": \"My First Blog by author1\",\n        \"slug\": \"my-first-blog-by-author1\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": 5,\n        \"topic_name\": \"Technologyss\",\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-13T07:16:02.097328Z\",\n        \"view_count\": 0,\n        \"created_at\": \"2026-03-13T07:13:42.297303Z\"\n    },\n    {\n        \"id\": 3,\n        \"title\": \"Published Blog Post\",\n        \"slug\": \"published-blog-post\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": null,\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-12T10:48:31.056587Z\",\n        \"view_count\": 2,\n        \"created_at\": \"2026-03-12T10:48:31.058589Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "33. Single Blog Detail",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/:slug/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                ":slug",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "my-first-blog-by-author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "33. Single Blog Detail",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/:slug/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    ":slug",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "my-first-blog-by-author1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:17:13 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "392"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 4,\n    \"title\": \"My First Blog by author1\",\n    \"slug\": \"my-first-blog-by-author1\",\n    \"content\": \"This is the content written by author1.\",\n    \"author\": 5,\n    \"author_username\": \"author1\",\n    \"topic\": 5,\n    \"topic_name\": \"Technologyss\",\n    \"banner_image\": null,\n    \"is_published\": true,\n    \"published_at\": \"2026-03-13T07:16:02.097328Z\",\n    \"view_count\": 1,\n    \"created_at\": \"2026-03-13T07:13:42.297303Z\",\n    \"updated_at\": \"2026-03-13T07:16:02.098356Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "34. Blogs by Topic",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/topic/:topic_slug/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "topic",
+                ":topic_slug",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "topic_slug",
+                  "value": "technology"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "34. Blogs by Topic",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/topic/:topic_slug/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "topic",
+                    ":topic_slug",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "topic_slug",
+                      "value": "technologyss"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:17:32 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "299"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 4,\n        \"title\": \"My First Blog by author1\",\n        \"slug\": \"my-first-blog-by-author1\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": 5,\n        \"topic_name\": \"Technologyss\",\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-13T07:16:02.097328Z\",\n        \"view_count\": 1,\n        \"created_at\": \"2026-03-13T07:13:42.297303Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "35. Blogs by Author",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/author/:username/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "author",
+                ":username",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "username",
+                  "value": "author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "35. Blogs by Author",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/author/:username/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "author",
+                    ":username",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "username",
+                      "value": "author1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:17:48 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "562"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 4,\n        \"title\": \"My First Blog by author1\",\n        \"slug\": \"my-first-blog-by-author1\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": 5,\n        \"topic_name\": \"Technologyss\",\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-13T07:16:02.097328Z\",\n        \"view_count\": 1,\n        \"created_at\": \"2026-03-13T07:13:42.297303Z\"\n    },\n    {\n        \"id\": 3,\n        \"title\": \"Published Blog Post\",\n        \"slug\": \"published-blog-post\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": null,\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-12T10:48:31.056587Z\",\n        \"view_count\": 2,\n        \"created_at\": \"2026-03-12T10:48:31.058589Z\"\n    }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "36. List Comments on Blog",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/:slug/comments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                ":slug",
+                "comments",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "my-first-blog-by-author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "36. List Comments on Blog",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/:slug/comments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    ":slug",
+                    "comments",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "my-first-blog-by-author1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:19:04 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, POST, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "189"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 4,\n        \"blog\": 4,\n        \"user\": 5,\n        \"username\": \"author1\",\n        \"content\": \"Great post by author1!\",\n        \"is_deleted\": false,\n        \"created_at\": \"2026-03-13T07:18:41.867149Z\",\n        \"updated_at\": \"2026-03-13T07:18:41.867149Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "37. Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Great post by author1!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/blogs/:slug/comments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                ":slug",
+                "comments",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "my-first-blog-by-author1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "37. Add Comment",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"content\": \"Great post by author1!\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/:slug/comments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    ":slug",
+                    "comments",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "slug",
+                      "value": "my-first-blog-by-author1"
+                    }
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:18:41 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, POST, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "187"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": 4,\n    \"blog\": 4,\n    \"user\": 5,\n    \"username\": \"author1\",\n    \"content\": \"Great post by author1!\",\n    \"is_deleted\": false,\n    \"created_at\": \"2026-03-13T07:18:41.867149Z\",\n    \"updated_at\": \"2026-03-13T07:18:41.867149Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "38. Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/blogs/comments/:comment_id/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "blogs",
+                "comments",
+                ":comment_id",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "comment_id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "38. Delete Comment",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/blogs/comments/:comment_id/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "blogs",
+                    "comments",
+                    ":comment_id",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "comment_id",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:19:49 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "DELETE, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "29"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"error\": \"Permission denied\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "39. List My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notifications/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "40. Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/notifications/:notification_id/read/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                ":notification_id",
+                "read",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "notification_id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Blog Management",
+      "item": [
+        {
+          "name": "41. List All Blogs including Drafts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/blogs/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "blogs",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "41. List All Blogs including Drafts",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/blogs/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "blogs",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:21:23 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "GET, HEAD, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "823"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "[\n    {\n        \"id\": 4,\n        \"title\": \"My First Blog by author1\",\n        \"slug\": \"my-first-blog-by-author1\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": 5,\n        \"topic_name\": \"Technologyss\",\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-13T07:16:02.097328Z\",\n        \"view_count\": 1,\n        \"created_at\": \"2026-03-13T07:13:42.297303Z\"\n    },\n    {\n        \"id\": 3,\n        \"title\": \"Published Blog Post\",\n        \"slug\": \"published-blog-post\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": null,\n        \"banner_image\": null,\n        \"is_published\": true,\n        \"published_at\": \"2026-03-12T10:48:31.056587Z\",\n        \"view_count\": 2,\n        \"created_at\": \"2026-03-12T10:48:31.058589Z\"\n    },\n    {\n        \"id\": 2,\n        \"title\": \"My seoncd Blog Post\",\n        \"slug\": \"my-seoncd-blog-post\",\n        \"author\": 5,\n        \"author_username\": \"author1\",\n        \"topic\": 2,\n        \"topic_name\": \"Lifestyle\",\n        \"banner_image\": null,\n        \"is_published\": false,\n        \"published_at\": null,\n        \"view_count\": 0,\n        \"created_at\": \"2026-03-12T10:46:48.349063Z\"\n    }\n]"
+            }
+          ]
+        },
+        {
+          "name": "42. Delete Blog",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/blogs/:blog_id/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "blogs",
+                ":blog_id",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "blog_id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "43. Migrate Blog to Another Topic",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"new_topic_id\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/blogs/:blog_id/migrate-topic/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "blogs",
+                ":blog_id",
+                "migrate-topic",
+                ""
+              ],
+              "variable": [
+                {
+                  "key": "blog_id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "43. Migrate Blog to Another Topic",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_access_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"new_topic_id\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin/blogs/:blog_id/migrate-topic/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "blogs",
+                    ":blog_id",
+                    "migrate-topic",
+                    ""
+                  ],
+                  "variable": [
+                    {
+                      "key": "blog_id",
+                      "value": "2"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Fri, 13 Mar 2026 07:22:17 GMT"
+                },
+                {
+                  "key": "Server",
+                  "value": "WSGIServer/0.2 CPython/3.11.6"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Allow",
+                  "value": "PATCH, OPTIONS"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "DENY"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "95"
+                },
+                {
+                  "key": "Vary",
+                  "value": "origin"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Blog migrated from 'Lifestyle' to 'Lifestyle'\",\n    \"blog_id\": 2,\n    \"new_topic\": \"Lifestyle\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "superadmin_access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "superadmin_refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
