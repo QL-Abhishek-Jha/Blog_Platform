@@ -86,6 +86,14 @@ class TopicDetailView(APIView):
         topic = self._get_topic(slug)
         if not topic:
             return Response({"error": "Topic not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Edge case: topic has blogs
+        if Blog.objects.filter(topic=topic).exists():
+            return Response(
+                {"error": "Cannot delete topic. Move or delete blogs under this topic first."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         topic.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
