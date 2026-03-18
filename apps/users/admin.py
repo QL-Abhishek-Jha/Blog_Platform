@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, PasswordResetToken, Subscription
+from .models import User, Subscription
 
 # CUSTOM ADMIN FOR ADMIN ROLE (non-superuser)
 # Admins can change user role to "author" but cannot create other admins.
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display  = ["id", "email", "username", "role", "is_active", "is_staff", "created_at"]
+    list_display  = ["id", "email", "username", "role", "is_active", "is_staff", "created_at","updated_at"]
     list_filter   = ["role", "is_active", "is_staff"]
     search_fields = ["email", "username"]
     ordering      = ["-created_at"]
@@ -55,13 +55,6 @@ class UserAdmin(BaseUserAdmin):
     def has_delete_permission(self, request, obj=None):
         """Only superuser can delete users from panel."""
         return request.user.is_superadmin
-
-
-@admin.register(PasswordResetToken)
-class PasswordResetTokenAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "used", "expires_at", "created_at"]
-    list_filter  = ["used"]
-
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):

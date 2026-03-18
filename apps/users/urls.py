@@ -11,8 +11,6 @@ auth_urlpatterns = [
     path("reset-password/<str:uid>/<str:token>/", views.ResetPasswordView.as_view(), name="auth-reset-password"),
 ]
 
-
-
 user_urlpatterns = [
     path("me/", views.UserProfileView.as_view(), name="user-profile"),
     path("authors/<str:username>/", views.PublicAuthorProfileView.as_view(), name="author-public-profile"),
@@ -24,8 +22,4 @@ user_urlpatterns = [
 admin_user_urlpatterns = [
     path("", views.AdminUserListView.as_view(), name="admin-user-list"),
     path("<int:user_id>/", views.AdminUserDetailView.as_view(), name="admin-user-detail"),
-]
-
-superadmin_urlpatterns = [
-    path("create-admin/", views.AdminAccountCreateView.as_view(), name="superadmin-create-admin"),
 ]

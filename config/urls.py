@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from apps.users.urls import auth_urlpatterns, user_urlpatterns, admin_user_urlpatterns, superadmin_urlpatterns
+from apps.users.urls import auth_urlpatterns, user_urlpatterns, admin_user_urlpatterns
 from apps.blogs.urls import topic_urlpatterns, blog_urlpatterns, author_blog_urlpatterns, admin_blog_urlpatterns, notification_urlpatterns
 
 urlpatterns = [
@@ -15,9 +15,6 @@ urlpatterns = [
 
     # User Profiles & Subscriptions
     path("api/users/", include(user_urlpatterns)),
-
-    # Superadmin
-    path("api/superadmin/", include(superadmin_urlpatterns)),
 
     # Admin — User Management
     path("api/admin/users/", include(admin_user_urlpatterns)),
@@ -37,6 +34,6 @@ urlpatterns = [
     # Notifications
     path("api/notifications/", include(notification_urlpatterns)),
 ]
-
+# only in production Django automatically maps MEDIA_URL to MEDIA_ROOT using the static helper
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,18 +1,14 @@
-import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.conf import settings
 
 
-
 class TimestampMixin(models.Model):
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
-
 
 
 class UserManager(BaseUserManager):
@@ -35,37 +31,30 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin, TimestampMixin):
-    """
-    Custom user model.
-    Roles:
-      - user   (default, registered via API)
-      - author (promoted by admin)
-      - admin  (created by superadmin from Django panel or superadmin API)
-    Superuser has full Django admin access.
-    """
+    # roles: user (default), author (promoted by admin), admin (created via Django panel)
 
-    ROLE_USER = "user"
+    ROLE_USER   = "user"
     ROLE_AUTHOR = "author"
-    ROLE_ADMIN = "admin"
+    ROLE_ADMIN  = "admin"
 
     ROLE_CHOICES = (
-        (ROLE_USER, "User"),
+        (ROLE_USER,   "User"),
         (ROLE_AUTHOR, "Author"),
-        (ROLE_ADMIN, "Admin"),
+        (ROLE_ADMIN,  "Admin"),
     )
 
-    username = models.CharField(max_length=150, unique=True)
-    email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=ROLE_USER)
-    bio = models.TextField(blank=True)
+    username    = models.CharField(max_length=150, unique=True)
+    email       = models.EmailField(unique=True)
+    first_name  = models.CharField(max_length=100, blank=True)
+    last_name   = models.CharField(max_length=100, blank=True)
+    role        = models.CharField(max_length=10, choices=ROLE_CHOICES, default=ROLE_USER)
+    bio         = models.TextField(blank=True)
     profile_pic = models.ImageField(upload_to="profile_pics/", null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    is_active   = models.BooleanField(default=True)
+    is_staff    = models.BooleanField(default=False)
     is_superadmin = models.BooleanField(default=False)
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD  = "email"
     REQUIRED_FIELDS = ["username"]
 
     objects = UserManager()
@@ -85,50 +74,31 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampMixin):
     def is_admin_user(self):
         return self.role == self.ROLE_ADMIN
 
-class PasswordResetToken(TimestampMixin):
-    "Stores password reset tokens. Link-based reset — no email service needed."
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_tokens")
-    token = models.UUIDField(default=uuid.uuid4, unique=True)
-    expires_at = models.DateTimeField()
-    used = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = "password_reset_tokens"
-
-    def __str__(self):
-        return f"Reset token for {self.user.email}"
+    def _is_protected(self):
+        # prevents admin from modifying staff or superadmin accounts
+        return self.is_staff or self.is_superadmin
 
 
 class SubscriptionManager(models.Manager):
-    "Custom manager for Subscription model."
 
     def subscribers_of(self, author):
-        """Return all subscriptions for a given author."""
         return self.filter(author=author).select_related("subscriber")
 
     def is_subscribed(self, subscriber, author):
-        """Check if a user is subscribed to an author."""
         return self.filter(subscriber=subscriber, author=author).exists()
 
 
 class Subscription(TimestampMixin):
-    """
-    Subscription table — a user subscribes to an author.
-    Constraints:
-      - A user can subscribe to an author only once (unique_together).
-      - A subscriber cannot subscribe to themselves (enforced in clean()).
-    """
+    # a user subscribes to an author — unique_together prevents duplicate subscriptions
     subscriber = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="subscriptions",
-        help_text="The user who is subscribing",
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="followers",
-        help_text="The author being subscribed to",
     )
 
     objects = SubscriptionManager()
@@ -139,7 +109,6 @@ class Subscription(TimestampMixin):
         ordering = ["-created_at"]
 
     def clean(self):
-        "Subscriber cannot subscribe to themselves."
         from django.core.exceptions import ValidationError
         if self.subscriber == self.author:
             raise ValidationError("You cannot subscribe to yourself.")
