@@ -104,7 +104,7 @@ class ResetPasswordSerializer(serializers.Serializer):
             attrs["user"] = user
             return attrs
 
-        except DjangoUnicodeDecodeError:
+        except (User.DoesNotExist, DjangoUnicodeDecodeError):
             raise ValidationError("Reset link is invalid or has expired.")
 
 

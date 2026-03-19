@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.db.models import F
 
 from .models import Topic, Blog, Comment, Notification
 from .serializers import (
@@ -107,8 +108,6 @@ class PublicBlogListView(APIView):
 
 
 class PublicBlogDetailView(APIView):
-    # public — increments view count on each hit
-
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -116,11 +115,12 @@ class PublicBlogDetailView(APIView):
         blog = Blog.objects.filter(slug=slug, is_published=True).select_related("author", "topic").first()
         if not blog:
             return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
-        blog.view_count += 1
-        blog.save(update_fields=["view_count"])
+        
+        Blog.objects.filter(pk=blog.pk).update(view_count=F("view_count") + 1)
+        blog.refresh_from_db()
+        
         serializer = BlogDetailSerializer(blog)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class BlogsByTopicView(APIView):
     # public — all published blogs under a specific topic
