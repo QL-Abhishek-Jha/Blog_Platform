@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate
 from django.utils.encoding import force_bytes, smart_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from rest_framework.exceptions import ValidationError
 
 from .models import User, Subscription
 
@@ -17,19 +16,27 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields           = ["id", "username", "email", "password", "confirm_password", "first_name", "last_name"]
         read_only_fields = ["id"]
 
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Email already registered.")
-        return value.lower()
-
-    def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username already taken.")
-        return value
-
     def validate(self, data):
-        if data["password"] != data["confirm_password"]:
-            raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
+        errors = {}
+
+        email    = data.get("email", "").lower()
+        username = data.get("username", "")
+        password = data.get("password", "")
+        confirm  = data.get("confirm_password", "")
+
+        if User.objects.filter(email=email).exists():
+            errors["email"] = "Email already registered."
+
+        if User.objects.filter(username=username).exists():
+            errors["username"] = "Username already taken."
+
+        if password != confirm:
+            errors["confirm_password"] = "Passwords do not match."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        data["email"] = email
         return data
 
     def create(self, validated_data):
@@ -42,11 +49,16 @@ class UserLoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        user = authenticate(email=data.get("email"), password=data.get("password"))
+        email    = data.get("email", "")
+        password = data.get("password", "")
+
+        user = authenticate(email=email, password=password)
+
         if not user:
-            raise serializers.ValidationError("Invalid email or password.")
+            raise serializers.ValidationError({"non_field_errors": "Invalid email or password."})
         if not user.is_active:
-            raise serializers.ValidationError("Account is disabled.")
+            raise serializers.ValidationError({"non_field_errors": "Account is disabled."})
+
         data["user"] = user
         return data
 
@@ -57,10 +69,21 @@ class ChangePasswordSerializer(serializers.Serializer):
     confirm_new_password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        if data["new_password"] != data["confirm_new_password"]:
-            raise serializers.ValidationError({"confirm_new_password": "Passwords do not match."})
-        if data["old_password"] == data["new_password"]:
-            raise serializers.ValidationError({"new_password": "New password cannot be the same as old password."})
+        errors = {}
+
+        old_password = data.get("old_password", "")
+        new_password = data.get("new_password", "")
+        confirm      = data.get("confirm_new_password", "")
+
+        if new_password != confirm:
+            errors["confirm_new_password"] = "Passwords do not match."
+
+        if old_password == new_password:
+            errors["new_password"] = "New password cannot be the same as old password."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
         return data
 
 
@@ -68,14 +91,17 @@ class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate(self, attrs):
-        email = attrs.get("email")
-        if User.objects.filter(email=email).exists():
-            user  = User.objects.get(email=email)
+        email = attrs.get("email", "").lower()
+
+        user = User.objects.filter(email=email).first()
+        if user:
             uid   = urlsafe_base64_encode(force_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
             link  = f"http://localhost:8000/api/auth/reset-password/{uid}/{token}/"
-            # TODO: send link via email service instead of printing
+            # TODO: send link via email service
             # print("Password Reset Link:", link)
+
+        attrs["email"] = email
         return attrs
 
 
@@ -84,26 +110,31 @@ class ResetPasswordSerializer(serializers.Serializer):
     confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
+        errors = {}
+
+        password         = attrs.get("password", "")
+        confirm_password = attrs.get("confirm_password", "")
+        uid              = self.context.get("uid")
+        token            = self.context.get("token")
+
+        if password != confirm_password:
+            errors["confirm_password"] = "Passwords do not match."
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
         try:
-            password         = attrs.get("password")
-            confirm_password = attrs.get("confirm_password")
-            uid              = self.context.get("uid")
-            token            = self.context.get("token")
-
-            if password != confirm_password:
-                raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
-
             user_id = smart_str(urlsafe_base64_decode(uid))
             user    = User.objects.get(id=user_id)
 
             if not PasswordResetTokenGenerator().check_token(user, token):
-                raise ValidationError("Reset link is invalid or has expired.")
+                raise serializers.ValidationError({"token": "Reset link is invalid or has expired."})
 
             attrs["user"] = user
             return attrs
 
         except (User.DoesNotExist, DjangoUnicodeDecodeError, ValueError, TypeError):
-            raise ValidationError("Reset link is invalid or has expired.")
+            raise serializers.ValidationError({"token": "Reset link is invalid or has expired."})
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -123,7 +154,6 @@ class AdminUserSerializer(serializers.ModelSerializer):
     class Meta:
         model            = User
         fields           = ["id", "username", "email", "role", "is_active", "created_at"]
-        # BUG FIX: was `read_only_fields = fields` which is a mutable alias — now explicit list
         read_only_fields = ["id", "username", "email", "role", "is_active", "created_at"]
 
 
@@ -132,14 +162,17 @@ class AdminUserUpdateSerializer(serializers.ModelSerializer):
         model  = User
         fields = ["role", "is_active"]
 
-    def validate_role(self, value):
-        if value not in ("user", "author"):
-            raise serializers.ValidationError("Role must be 'user' or 'author'.")
-        return value
+    def validate(self, data):
+        role = data.get("role")
+
+        if role is not None and role not in ("user", "author"):
+            raise serializers.ValidationError({"role": "Role must be 'user' or 'author'."})
+
+        return data
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    author_username = serializers.CharField(source="author.username", read_only=True)
+    author_username = serializers.CharField(source="author.username", read_only=True, default=None)
     author_bio      = serializers.CharField(source="author.bio",      read_only=True, default="")
 
     class Meta:

@@ -21,6 +21,7 @@ from .serializers import (
     NotificationSerializer,
 )
 from core.permissions import IsAuthorUser, IsAdminUser, IsAuthorOrAdminUser
+from core.messages import MSG
 from .utils import send_new_post_notifications
 
 logger = logging.getLogger("apps")
@@ -40,12 +41,12 @@ class TopicListCreateView(APIView):
 
     def get(self, request):
         try:
-            topics = Topic.objects.all()
+            topics     = Topic.objects.all()
             serializer = TopicSerializer(topics, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch topics: {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         serializer = TopicSerializer(data=request.data)
@@ -73,98 +74,96 @@ class TopicDetailView(APIView):
     def get(self, request, slug):
         topic = self._get_topic(slug)
         if not topic:
-            return Response({"error": "Topic not found"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = TopicSerializer(topic)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"error": MSG.ERR_TOPIC_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+        return Response(TopicSerializer(topic).data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug):
         topic = self._get_topic(slug)
         if not topic:
-            return Response({"error": "Topic not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_TOPIC_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         serializer = TopicSerializer(topic, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"message": MSG.TOPIC_UPDATED, "data": serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     def delete(self, request, slug):
         topic = self._get_topic(slug)
         if not topic:
-            return Response({"error": "Topic not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_TOPIC_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         if Blog.objects.filter(topic=topic).exists():
-            return Response(
-                {"error": "Cannot delete topic. Move or delete blogs under this topic first."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({"error": MSG.ERR_TOPIC_HAS_BLOGS}, status=status.HTTP_400_BAD_REQUEST)
         topic.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": MSG.TOPIC_DELETED}, status=status.HTTP_200_OK)
 
 
 class PublicBlogListView(APIView):
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def get(self, request):
         try:
-            blogs = Blog.objects.published().select_related("author", "topic")
+            blogs      = Blog.objects.published().select_related("author", "topic")
             serializer = BlogListSerializer(blogs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch blog list: {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PublicBlogDetailView(APIView):
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def get(self, request, slug):
         try:
             blog = Blog.objects.filter(slug=slug, is_published=True).select_related("author", "topic").first()
             if not blog:
-                return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
             blog.view_count += 1
             blog.save(update_fields=["view_count"])
-            serializer = BlogDetailSerializer(blog)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(BlogDetailSerializer(blog).data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch blog detail for slug '{slug}': {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class BlogsByTopicView(APIView):
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def get(self, request, slug):
         try:
             topic = Topic.objects.filter(slug=slug).first()
             if not topic:
-                return Response({"error": "Topic not found"}, status=status.HTTP_404_NOT_FOUND)
-            blogs = Blog.objects.by_topic(topic).select_related("author", "topic")
+                return Response({"error": MSG.ERR_TOPIC_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+            blogs      = Blog.objects.by_topic(topic).select_related("author", "topic")
             serializer = BlogListSerializer(blogs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch blogs by topic '{slug}': {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class BlogsByAuthorView(APIView):
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def get(self, request, username):
         try:
             from apps.users.models import User
             author = User.objects.filter(username=username, role="author", is_active=True).first()
             if not author:
-                return Response({"error": "Author not found"}, status=status.HTTP_404_NOT_FOUND)
-            blogs = Blog.objects.published().filter(author=author).select_related("author", "topic")
+                return Response({"error": MSG.ERR_AUTHOR_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+            blogs      = Blog.objects.published().filter(author=author).select_related("author", "topic")
             serializer = BlogListSerializer(blogs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch blogs by author '{username}': {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AuthorBlogListCreateView(APIView):
@@ -172,12 +171,12 @@ class AuthorBlogListCreateView(APIView):
 
     def get(self, request):
         try:
-            blogs = Blog.objects.by_author(request.user).select_related("topic")
+            blogs      = Blog.objects.by_author(request.user).select_related("topic")
             serializer = AuthorBlogListSerializer(blogs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch author blog list for user '{request.user.email}': {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         serializer = BlogCreateSerializer(data=request.data)
@@ -202,17 +201,16 @@ class AuthorBlogDetailView(APIView):
     def get(self, request, slug):
         blog = self._get_blog(slug, request.user)
         if not blog:
-            return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = BlogDetailSerializer(blog)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+        return Response(BlogDetailSerializer(blog).data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug):
         try:
             blog = self._get_blog(slug, request.user)
             if not blog:
-                return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
-            was_published = blog.is_published
-            serializer = BlogUpdateSerializer(blog, data=request.data, partial=True)
+                return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+            was_published    = blog.is_published
+            serializer       = BlogUpdateSerializer(blog, data=request.data, partial=True)
             if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             is_now_published = serializer.validated_data.get("is_published", blog.is_published)
@@ -229,7 +227,7 @@ class AuthorBlogDetailView(APIView):
             return Response(BlogDetailSerializer(blog).data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to update blog '{slug}' for user '{request.user.email}': {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AdminBlogListView(APIView):
@@ -237,12 +235,12 @@ class AdminBlogListView(APIView):
 
     def get(self, request):
         try:
-            blogs = Blog.objects.all().select_related("author", "topic")
+            blogs      = Blog.objects.all().select_related("author", "topic")
             serializer = AdminBlogListSerializer(blogs, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Admin failed to fetch blog list: {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AdminBlogDetailView(APIView):
@@ -251,9 +249,9 @@ class AdminBlogDetailView(APIView):
     def delete(self, request, blog_id):
         blog = Blog.objects.filter(id=blog_id).first()
         if not blog:
-            return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         blog.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": MSG.BLOG_DELETED if hasattr(MSG, "BLOG_DELETED") else "Blog deleted successfully"}, status=status.HTTP_200_OK)
 
 
 class AdminBlogMigrateTopicView(APIView):
@@ -262,20 +260,21 @@ class AdminBlogMigrateTopicView(APIView):
     def patch(self, request, blog_id):
         blog = Blog.objects.filter(id=blog_id).first()
         if not blog:
-            return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         serializer = AdminBlogMigrateTopicSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         new_topic = Topic.objects.filter(id=serializer.validated_data["new_topic_id"]).first()
         if not new_topic:
-            return Response({"error": "Topic not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_TOPIC_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         old_topic_name = blog.topic.name if blog.topic else "None"
-        blog.topic = new_topic
+        blog.topic     = new_topic
         blog.save(update_fields=["topic"])
         return Response(
             {
-                "message":   f"Blog migrated from '{old_topic_name}' to '{new_topic.name}'",
+                "message":   MSG.BLOG_MIGRATED,
                 "blog_id":   blog.id,
+                "old_topic": old_topic_name,
                 "new_topic": new_topic.name,
             },
             status=status.HTTP_200_OK,
@@ -298,18 +297,18 @@ class CommentListCreateView(APIView):
         try:
             blog = Blog.objects.filter(slug=slug, is_published=True).first()
             if not blog:
-                return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
-            comments = Comment.objects.by_blog(blog).select_related("user")
+                return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+            comments   = Comment.objects.by_blog(blog).select_related("user")
             serializer = CommentSerializer(comments, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch comments for blog '{slug}': {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, slug):
         blog = Blog.objects.filter(slug=slug, is_published=True).first()
         if not blog:
-            return Response({"error": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         serializer = CommentCreateSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -323,12 +322,12 @@ class CommentDeleteView(APIView):
     def delete(self, request, comment_id):
         comment = Comment.objects.filter(id=comment_id, is_deleted=False).first()
         if not comment:
-            return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_COMMENT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         if comment.user != request.user and getattr(request.user, "role", None) != "admin":
-            return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"error": MSG.ERR_PERMISSION_DENIED}, status=status.HTTP_403_FORBIDDEN)
         comment.is_deleted = True
         comment.save(update_fields=["is_deleted"])
-        return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)
+        return Response({"message": MSG.COMMENT_DELETED}, status=status.HTTP_200_OK)
 
 
 class NotificationListView(APIView):
@@ -337,11 +336,11 @@ class NotificationListView(APIView):
     def get(self, request):
         try:
             notifications = Notification.objects.filter(user=request.user)
-            serializer = NotificationSerializer(notifications, many=True)
+            serializer    = NotificationSerializer(notifications, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f"Failed to fetch notifications for user '{request.user.email}': {e}", exc_info=True)
-            return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class NotificationMarkReadView(APIView):
@@ -350,7 +349,7 @@ class NotificationMarkReadView(APIView):
     def patch(self, request, notification_id):
         notification = Notification.objects.filter(id=notification_id, user=request.user).first()
         if not notification:
-            return Response({"error": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": MSG.ERR_NOTIF_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         notification.is_read = True
         notification.save(update_fields=["is_read"])
-        return Response({"message": "Notification marked as read"}, status=status.HTTP_200_OK)
+        return Response({"message": MSG.NOTIFICATION_READ}, status=status.HTTP_200_OK)
