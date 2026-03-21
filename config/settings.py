@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
+import logging.handlers
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,13 +44,13 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "core.middleware.RequestLoggerMiddleware",          
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 ROOT_URLCONF = "config.urls"
 
 WSGI_APPLICATION = "config.wsgi.application"
@@ -117,8 +118,17 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    "EXCEPTION_HANDLER":          "core.exception_handler.custom_exception_handler",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "core.throttling.LoggedAnonRateThrottle",
+        "core.throttling.LoggedUserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": os.getenv("THROTTLE_ANON_RATE", "100/hour"),
+        "user": os.getenv("THROTTLE_USER_RATE", "1000/hour"),
+    },
+    "DEFAULT_PAGINATION_CLASS": "core.pagination.StandardPagination",
+    "PAGE_SIZE":                 int(os.getenv("PAGE_SIZE", "10")),
 }
 
 
@@ -149,3 +159,75 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+#logger
+LOGGING = {
+    "version":                  1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "structured": {
+            "format":  "[{levelname}] {asctime} | {name} | {message}",
+            "style":   "{",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "block": {
+            "format":  "{message}",
+            "style":   "{",
+        },
+    },
+
+    "handlers": {
+        "console_structured": {
+            "class":     "logging.StreamHandler",
+            "formatter": "structured",
+        },
+        "console_block": {
+            "class":     "logging.StreamHandler",
+            "formatter": "block",
+        },
+        "file_structured": {
+            "class":     "logging.handlers.RotatingFileHandler",
+            "filename":  str(BASE_DIR / "logs/errors.log"),
+            "maxBytes":  10 * 1024 * 1024,
+            "backupCount": 5,
+            "encoding":  "utf-8",
+            "formatter": "structured",
+        },
+        "file_block": {
+            "class":     "logging.handlers.RotatingFileHandler",
+            "filename":  str(BASE_DIR / "logs/errors.log"),
+            "maxBytes":  10 * 1024 * 1024,
+            "backupCount": 5,
+            "encoding":  "utf-8",
+            "formatter": "block",
+        },
+    },
+
+    "loggers": {
+        "django": {
+            "handlers":  ["console_structured", "file_structured"],
+            "level":     "ERROR",
+            "propagate": False,
+        },
+        "api": {
+            "handlers":  ["console_block", "file_block"],
+            "level":     "INFO",
+            "propagate": False,
+        },
+        "apps": {
+            "handlers":  ["console_structured", "file_structured"],
+            "level":     "INFO",
+            "propagate": False,
+        },
+    },
+}
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CACHES = {
+    "default": {
+        "BACKEND":  "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}

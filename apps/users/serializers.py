@@ -9,13 +9,12 @@ from .models import User, Subscription
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    # confirm_password is write only, not saved to db
     confirm_password = serializers.CharField(write_only=True)
-    password = serializers.CharField(write_only=True, min_length=8)
+    password         = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
-        model = User
-        fields = ["id", "username", "email", "password", "confirm_password", "first_name", "last_name"]
+        model            = User
+        fields           = ["id", "username", "email", "password", "confirm_password", "first_name", "last_name"]
         read_only_fields = ["id"]
 
     def validate_email(self, value):
@@ -39,7 +38,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email    = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
@@ -53,8 +52,8 @@ class UserLoginSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True)
-    new_password = serializers.CharField(write_only=True, min_length=8)
+    old_password         = serializers.CharField(write_only=True)
+    new_password         = serializers.CharField(write_only=True, min_length=8)
     confirm_new_password = serializers.CharField(write_only=True)
 
     def validate(self, data):
@@ -66,37 +65,36 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class ForgotPasswordSerializer(serializers.Serializer):
-    # silently skips unknown emails to avoid exposing registered accounts
     email = serializers.EmailField()
 
     def validate(self, attrs):
         email = attrs.get("email")
         if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-            uid = urlsafe_base64_encode(force_bytes(user.id))
+            user  = User.objects.get(email=email)
+            uid   = urlsafe_base64_encode(force_bytes(user.id))
             token = PasswordResetTokenGenerator().make_token(user)
-            link = f"http://localhost:8000/api/auth/reset-password/{uid}/{token}/"
-            print("Password Reset Link:", link)
+            link  = f"http://localhost:8000/api/auth/reset-password/{uid}/{token}/"
+            # TODO: send link via email service instead of printing
+            # print("Password Reset Link:", link)
         return attrs
 
 
 class ResetPasswordSerializer(serializers.Serializer):
-    # validates token and returns user — actual password save is done in the view
-    password = serializers.CharField(write_only=True, min_length=8)
+    password         = serializers.CharField(write_only=True, min_length=8)
     confirm_password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
         try:
-            password = attrs.get("password")
+            password         = attrs.get("password")
             confirm_password = attrs.get("confirm_password")
-            uid = self.context.get("uid")
-            token = self.context.get("token")
+            uid              = self.context.get("uid")
+            token            = self.context.get("token")
 
             if password != confirm_password:
                 raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
 
             user_id = smart_str(urlsafe_base64_decode(uid))
-            user = User.objects.get(id=user_id)
+            user    = User.objects.get(id=user_id)
 
             if not PasswordResetTokenGenerator().check_token(user, token):
                 raise ValidationError("Reset link is invalid or has expired.")
@@ -104,40 +102,34 @@ class ResetPasswordSerializer(serializers.Serializer):
             attrs["user"] = user
             return attrs
 
-        except (User.DoesNotExist, DjangoUnicodeDecodeError):
+        except (User.DoesNotExist, DjangoUnicodeDecodeError, ValueError, TypeError):
             raise ValidationError("Reset link is invalid or has expired.")
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # authenticated user viewing or updating their own profile
     class Meta:
-        model = User
-        fields = [
-            "id", "username", "email", "first_name", "last_name",
-            "role", "bio", "profile_pic", "created_at",
-        ]
+        model            = User
+        fields           = ["id", "username", "email", "first_name", "last_name", "role", "bio", "profile_pic", "created_at"]
         read_only_fields = ["id", "email", "role", "created_at"]
 
 
 class PublicAuthorProfileSerializer(serializers.ModelSerializer):
-    # public facing, only what a visitor needs to see
     class Meta:
-        model = User
+        model  = User
         fields = ["username", "first_name", "last_name", "bio", "profile_pic"]
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
-    # admin viewing a user — includes role and active status
     class Meta:
-        model = User
-        fields = ["id", "username", "email", "role", "is_active", "created_at"]
-        read_only_fields = fields
+        model            = User
+        fields           = ["id", "username", "email", "role", "is_active", "created_at"]
+        # BUG FIX: was `read_only_fields = fields` which is a mutable alias — now explicit list
+        read_only_fields = ["id", "username", "email", "role", "is_active", "created_at"]
 
 
 class AdminUserUpdateSerializer(serializers.ModelSerializer):
-    # admin can only toggle role (user/author) and active status
     class Meta:
-        model = User
+        model  = User
         fields = ["role", "is_active"]
 
     def validate_role(self, value):
@@ -147,11 +139,10 @@ class AdminUserUpdateSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    # shows author info instead of raw ids
     author_username = serializers.CharField(source="author.username", read_only=True)
-    author_bio = serializers.CharField(source="author.bio", read_only=True)
+    author_bio      = serializers.CharField(source="author.bio",      read_only=True, default="")
 
     class Meta:
-        model = Subscription
-        fields = ["id", "author_username", "author_bio", "created_at"]
-        read_only_fields = fields
+        model            = Subscription
+        fields           = ["id", "author_username", "author_bio", "created_at"]
+        read_only_fields = ["id", "author_username", "author_bio", "created_at"]

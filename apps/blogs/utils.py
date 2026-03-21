@@ -1,21 +1,30 @@
+import logging
+
 from apps.users.models import Subscription
 from .models import Notification
 
+logger = logging.getLogger("apps")
+
 
 def send_new_post_notifications(blog):
-    # creates a notification record for each subscriber of the author
-    subscriptions = Subscription.objects.subscribers_of(author=blog.author)
+    try:
+        author_name = blog.author.username if blog.author else "Unknown"
 
-    notifications = [
-        Notification(
-            user=sub.subscriber,
-            blog=blog,
-            type=Notification.TYPE_NEW_POST,
-            content=f"{blog.author.username} published a new blog: {blog.title}",
-            is_read=False,
-        )
-        for sub in subscriptions
-    ]
+        subscriptions = Subscription.objects.subscribers_of(author=blog.author)
 
-    if notifications:
-        Notification.objects.bulk_create(notifications)
+        notifications = [
+            Notification(
+                user=sub.subscriber,
+                blog=blog,
+                type=Notification.TYPE_NEW_POST,
+                content=f"{author_name} published a new blog: {blog.title}",
+                is_read=False,
+            )
+            for sub in subscriptions
+        ]
+
+        if notifications:
+            Notification.objects.bulk_create(notifications)
+
+    except Exception as e:
+        logger.error(f"Failed to send notifications for blog '{blog.title}': {e}", exc_info=True)
