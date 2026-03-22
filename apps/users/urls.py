@@ -1,25 +1,27 @@
 from django.urls import path
 from . import views
 
-auth_urlpatterns = [
-    path("register/", views.UserRegistrationView.as_view(), name="auth-register"),
-    path("login/", views.UserLoginView.as_view(), name="auth-login"),
-    path("logout/", views.UserLogoutView.as_view(), name="auth-logout"),
-    path("token/refresh/", views.TokenRefreshView.as_view(), name="auth-token-refresh"),
-    path("change-password/", views.ChangePasswordView.as_view(), name="auth-change-password"),
-    path("forgot-password/", views.ForgotPasswordView.as_view(), name="auth-forgot-password"),
-    path("reset-password/<str:uid>/<str:token>/", views.ResetPasswordView.as_view(), name="auth-reset-password"),
-]
+"all user app routes — mounted at api/users/ in config/urls.py"
 
-user_urlpatterns = [
-    path("me/", views.UserProfileView.as_view(), name="user-profile"),
-    path("authors/<str:username>/", views.PublicAuthorProfileView.as_view(), name="author-public-profile"),
-    path("subscribe/<str:username>/", views.SubscribeAuthorView.as_view(), name="subscribe-author"),
-    path("unsubscribe/<str:username>/", views.UnsubscribeAuthorView.as_view(), name="unsubscribe-author"),
-    path("my-subscriptions/", views.MySubscriptionsView.as_view(), name="my-subscriptions"),
-]
+users_urlpatterns = [
 
-admin_user_urlpatterns = [
-    path("", views.AdminUserListView.as_view(), name="admin-user-list"),
-    path("<int:user_id>/", views.AdminUserDetailView.as_view(), name="admin-user-detail"),
+    #Auth
+    path("register/",views.UserRegistrationView.as_view(),name="register"),
+    path("login/",views.UserLoginView.as_view(),name="login"),
+    path("logout/",views.UserLogoutView.as_view(),name="logout"),
+    path("token/refresh/",views.TokenRefreshView.as_view(),name="token-refresh"),
+    path("password/change/",views.ChangePasswordView.as_view(),name="password-change"),
+    path("password/forgot/",views.ForgotPasswordView.as_view(),name="password-forgot"),
+    path("password/reset/<str:uid>/<str:token>/",views.ResetPasswordView.as_view(),name="password-reset"),
+
+    #Profile
+    path("me/",views.UserProfileView.as_view(),name="me"),
+    path("authors/<str:username>/",views.PublicAuthorProfileView.as_view(),name="author-profile"),
+    path("authors/<str:username>/subscribe/",views.SubscribeAuthorView.as_view(),name="author-subscribe"),
+    path("authors/<str:username>/unsubscribe/",views.UnsubscribeAuthorView.as_view(),name="author-unsubscribe"),
+    path("subscriptions/",views.MySubscriptionsView.as_view(),name="my-subscriptions"),
+
+    #Admin
+    path("admin/",views.AdminUserListView.as_view(),name="admin-user-list"),
+    path("admin/<int:user_id>/",views.AdminUserDetailView.as_view(),name="admin-user-detail"),
 ]
