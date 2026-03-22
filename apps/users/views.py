@@ -26,45 +26,40 @@ from core.permissions import IsAdminUser
 from core.pagination import StandardPagination
 from core.messages import MSG
 
-User = get_user_model()
+User   = get_user_model()
 logger = logging.getLogger("apps")
 
 
-#Pagination Mixin
+# ── Pagination Mixin ──────────────────────────────────────────────────────────
 class PaginationMixin:
     pagination_class = StandardPagination
 
     @property
     def paginator(self):
-        "create one paginator instance and reuse it across the request"
         if not hasattr(self, "_paginator"):
             self._paginator = self.pagination_class()
         return self._paginator
 
     def paginate_queryset(self, queryset):
-        "slice queryset to the requested page"
         return self.paginator.paginate_queryset(queryset, self.request, view=self)
 
     def get_paginated_response(self, data):
-        "wrap data in the pagination envelope"
         return self.paginator.get_paginated_response(data)
 
 
-#Helper
+# ── Helper ────────────────────────────────────────────────────────────────────
 
 def _blacklist_all_user_tokens(user):
-    "invalidate every outstanding JWT for this user — used after password change"
     tokens = OutstandingToken.objects.filter(user=user)
     for token in tokens:
         BlacklistedToken.objects.get_or_create(token=token)
 
 
-#Auth Views
+# ── Auth Views ────────────────────────────────────────────────────────────────
 
 class UserRegistrationView(APIView):
-    "register a new user — no auth required"
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -79,9 +74,8 @@ class UserRegistrationView(APIView):
 
 
 class UserLoginView(APIView):
-    "login with email + password, receive JWT access and refresh tokens"
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
@@ -89,24 +83,23 @@ class UserLoginView(APIView):
             email = request.data.get("email", "unknown")
             logger.warning(f"Failed login attempt for email: {email}")
             return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-        user = serializer.validated_data["user"]
+        user    = serializer.validated_data["user"]
         refresh = RefreshToken.for_user(user)
         logger.info(f"User logged in: {user.email} | role: {user.role}")
         return Response(
             {
-                "message": MSG.LOGIN,
-                "access_token": str(refresh.access_token),
+                "message":       MSG.LOGIN,
+                "access_token":  str(refresh.access_token),
                 "refresh_token": str(refresh),
-                "user": {"id": user.id, "email": user.email, "role": user.role},
+                "user":          {"id": user.id, "email": user.email, "role": user.role},
             },
             status=status.HTTP_200_OK,
         )
 
 
 class TokenRefreshView(APIView):
-    "exchange an old refresh token for a fresh pair of tokens (old one is blacklisted)"
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def post(self, request):
         refresh_token = request.data.get("refresh_token")
@@ -114,8 +107,8 @@ class TokenRefreshView(APIView):
             return Response({"error": MSG.ERR_REFRESH_REQUIRED}, status=status.HTTP_400_BAD_REQUEST)
         try:
             old_refresh = RefreshToken(refresh_token)
-            user_id = old_refresh.payload.get("user_id")
-            user = User.objects.filter(id=user_id).first()
+            user_id     = old_refresh.payload.get("user_id")
+            user        = User.objects.filter(id=user_id).first()
             if not user:
                 return Response({"error": MSG.ERR_USER_NOT_FOUND}, status=status.HTTP_401_UNAUTHORIZED)
             old_refresh.blacklist()
@@ -123,10 +116,10 @@ class TokenRefreshView(APIView):
             logger.info(f"Token refreshed for user: {user.email}")
             return Response(
                 {
-                    "message": MSG.TOKEN_REFRESHED,
-                    "access_token": str(new_refresh.access_token),
+                    "message":       MSG.TOKEN_REFRESHED,
+                    "access_token":  str(new_refresh.access_token),
                     "refresh_token": str(new_refresh),
-                    "user": {"id": user.id, "email": user.email, "role": user.role},
+                    "user":          {"id": user.id, "email": user.email, "role": user.role},
                 },
                 status=status.HTTP_200_OK,
             )
@@ -139,7 +132,6 @@ class TokenRefreshView(APIView):
 
 
 class UserLogoutView(APIView):
-    "blacklist the provided refresh token to log the user out"
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -156,7 +148,6 @@ class UserLogoutView(APIView):
 
 
 class ChangePasswordView(APIView):
-    "change password after verifying the old one, then invalidate all sessions"
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -175,9 +166,8 @@ class ChangePasswordView(APIView):
 
 
 class ForgotPasswordView(APIView):
-    "send a password reset link to the given email (silently skips unknown emails)"
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def post(self, request):
         serializer = ForgotPasswordSerializer(data=request.data)
@@ -189,9 +179,8 @@ class ForgotPasswordView(APIView):
 
 
 class ResetPasswordView(APIView):
-    "set a new password using the uid + token from the reset link"
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def post(self, request, uid, token):
         serializer = ResetPasswordSerializer(
@@ -207,10 +196,9 @@ class ResetPasswordView(APIView):
         return Response({"message": MSG.PASSWORD_RESET}, status=status.HTTP_200_OK)
 
 
-#Profile Views
+# ── Profile Views ─────────────────────────────────────────────────────────────
 
 class UserProfileView(APIView):
-    "get or update the currently logged-in user's profile, or permanently delete account"
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -229,7 +217,6 @@ class UserProfileView(APIView):
         )
 
     def delete(self, request):
-        "require password confirmation before permanently deleting the account"
         password = request.data.get("password")
         if not password:
             return Response({"error": MSG.ERR_PASSWORD_REQUIRED}, status=status.HTTP_400_BAD_REQUEST)
@@ -242,9 +229,8 @@ class UserProfileView(APIView):
 
 
 class PublicAuthorProfileView(APIView):
-    "anyone can view a public author profile by username"
     authentication_classes = []
-    permission_classes = [AllowAny]
+    permission_classes     = [AllowAny]
 
     def get(self, request, username):
         user = User.objects.filter(username=username, role=User.ROLE_AUTHOR, is_active=True).first()
@@ -254,10 +240,9 @@ class PublicAuthorProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-#Subscription Views
+# ── Subscription Views ────────────────────────────────────────────────────────
 
 class SubscribeAuthorView(APIView):
-    "subscribe the logged-in user to an author — prevents self-subscribe and duplicates"
     permission_classes = [IsAuthenticated]
 
     def post(self, request, username):
@@ -274,7 +259,6 @@ class SubscribeAuthorView(APIView):
 
 
 class UnsubscribeAuthorView(APIView):
-    "remove the logged-in user's subscription from an author"
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, username):
@@ -290,7 +274,6 @@ class UnsubscribeAuthorView(APIView):
 
 
 class MySubscriptionsView(PaginationMixin, APIView):
-    "returns the current user's subscriptions paginated — each item shows author info"
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -303,14 +286,12 @@ class MySubscriptionsView(PaginationMixin, APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-#Admin User Views
+# ── Admin User Views ──────────────────────────────────────────────────────────
 
 class AdminUserListView(PaginationMixin, APIView):
-    "admin can see all registered users — paginated"
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
-        
         users = User.objects.all()
         page = self.paginate_queryset(users)
         if page is not None:
@@ -321,15 +302,12 @@ class AdminUserListView(PaginationMixin, APIView):
 
 
 class AdminUserDetailView(APIView):
-    "admin can view, update role/active status, or delete any non-protected user"
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def _get_user(self, user_id):
-        "look up a user by id, returns None if not found"
         return User.objects.filter(id=user_id).first()
 
     def _check_protected(self, user):
-        "block any action on staff or superadmin accounts"
         if user._is_protected():
             return Response(
                 {"error": MSG.ERR_PROTECTED_ACCOUNT},

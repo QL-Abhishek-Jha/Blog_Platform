@@ -13,6 +13,7 @@ class MSG:
     UNSUBSCRIBED           = "Unsubscribed successfully"
     TOPIC_DELETED          = "Topic deleted successfully"
     TOPIC_UPDATED          = "Topic updated successfully"
+    BLOG_DELETED           = "Blog deleted successfully"
     BLOG_MIGRATED          = "Blog topic migrated successfully"
     COMMENT_DELETED        = "Comment deleted successfully"
     NOTIFICATION_READ      = "Notification marked as read"

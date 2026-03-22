@@ -30,32 +30,27 @@ logger = logging.getLogger("apps")
 
 
 # ── Pagination Mixin ──────────────────────────────────────────────────────────
-# This mixin gives any APIView the same paginate_queryset / get_paginated_response
-# helpers that generic views (ListAPIView) have built-in.
-# Just inherit it before APIView: class MyView(PaginationMixin, APIView)
+# Gives any APIView the same paginate_queryset/get_paginated_response that
+# generic views have. Inherit before APIView: class MyView(PaginationMixin, APIView)
 class PaginationMixin:
     pagination_class = StandardPagination
 
     @property
     def paginator(self):
-        "create one paginator instance and reuse it for the whole request"
         if not hasattr(self, "_paginator"):
             self._paginator = self.pagination_class()
         return self._paginator
 
     def paginate_queryset(self, queryset):
-        "slices the queryset down to the current page only"
         return self.paginator.paginate_queryset(queryset, self.request, view=self)
 
     def get_paginated_response(self, data):
-        "wraps serialized data in the standard pagination envelope"
         return self.paginator.get_paginated_response(data)
 
 
 # ── Topic Views ───────────────────────────────────────────────────────────────
 
 class TopicListCreateView(PaginationMixin, APIView):
-    "GET is public and paginated, POST requires author or admin role"
 
     def get_authenticators(self):
         if self.request.method == "GET":
@@ -68,14 +63,12 @@ class TopicListCreateView(PaginationMixin, APIView):
         return [IsAuthenticated(), IsAuthorOrAdminUser()]
 
     def get(self, request):
-        "return all topics paginated so the client can scroll through them"
         try:
             topics = Topic.objects.all()
             page = self.paginate_queryset(topics)
             if page is not None:
                 serializer = TopicSerializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
-            # fallback when queryset is empty or pagination is disabled
             serializer = TopicSerializer(topics, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -83,7 +76,6 @@ class TopicListCreateView(PaginationMixin, APIView):
             return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        "create a new topic, saving who created it"
         serializer = TopicSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -92,7 +84,6 @@ class TopicListCreateView(PaginationMixin, APIView):
 
 
 class TopicDetailView(APIView):
-    "GET is public, PATCH/DELETE requires admin role"
 
     def get_authenticators(self):
         if self.request.method == "GET":
@@ -105,7 +96,6 @@ class TopicDetailView(APIView):
         return [IsAuthenticated(), IsAdminUser()]
 
     def _get_topic(self, slug):
-        "look up a topic by its slug, returns None if not found"
         return Topic.objects.filter(slug=slug).first()
 
     def get(self, request, slug):
@@ -131,7 +121,6 @@ class TopicDetailView(APIView):
         topic = self._get_topic(slug)
         if not topic:
             return Response({"error": MSG.ERR_TOPIC_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
-        # check first so we return a readable error before Django raises ProtectedError
         if Blog.objects.filter(topic=topic).exists():
             return Response({"error": MSG.ERR_TOPIC_HAS_BLOGS}, status=status.HTTP_400_BAD_REQUEST)
         topic.delete()
@@ -141,7 +130,6 @@ class TopicDetailView(APIView):
 # ── Public Blog Views ─────────────────────────────────────────────────────────
 
 class PublicBlogListView(PaginationMixin, APIView):
-    "anyone can browse published blogs — paginated"
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -160,7 +148,6 @@ class PublicBlogListView(PaginationMixin, APIView):
 
 
 class PublicBlogDetailView(APIView):
-    "increment view_count each time someone opens a blog"
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -178,7 +165,6 @@ class PublicBlogDetailView(APIView):
 
 
 class BlogsByTopicView(PaginationMixin, APIView):
-    "returns paginated list of published blogs under a given topic slug"
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -200,7 +186,6 @@ class BlogsByTopicView(PaginationMixin, APIView):
 
 
 class BlogsByAuthorView(PaginationMixin, APIView):
-    "returns paginated list of published blogs written by a specific author"
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -225,7 +210,6 @@ class BlogsByAuthorView(PaginationMixin, APIView):
 # ── Author Blog Views ─────────────────────────────────────────────────────────
 
 class AuthorBlogListCreateView(PaginationMixin, APIView):
-    "author sees all their own blogs (draft + published), paginated"
     permission_classes = [IsAuthenticated, IsAuthorUser]
 
     def get(self, request):
@@ -242,7 +226,6 @@ class AuthorBlogListCreateView(PaginationMixin, APIView):
             return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
-        "create a new blog; if published immediately, send notifications to subscribers"
         serializer = BlogCreateSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -257,11 +240,9 @@ class AuthorBlogListCreateView(PaginationMixin, APIView):
 
 
 class AuthorBlogDetailView(APIView):
-    "author can view or edit only their own blog"
     permission_classes = [IsAuthenticated, IsAuthorUser]
 
     def _get_blog(self, slug, author):
-        "only return the blog if it belongs to the current author"
         return Blog.objects.filter(slug=slug, author=author).select_related("topic").first()
 
     def get(self, request, slug):
@@ -281,12 +262,10 @@ class AuthorBlogDetailView(APIView):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             is_now_published = serializer.validated_data.get("is_published", blog.is_published)
             if not was_published and is_now_published:
-                # blog is being published for first time — stamp published_at and notify subscribers
                 serializer.save(published_at=timezone.now())
                 blog.refresh_from_db()
                 send_new_post_notifications(blog)
             elif was_published and not is_now_published:
-                # blog is being unpublished — clear the published_at timestamp
                 serializer.save(published_at=None)
                 blog.refresh_from_db()
             else:
@@ -297,11 +276,18 @@ class AuthorBlogDetailView(APIView):
             logger.error(f"Failed to update blog '{slug}' for user '{request.user.email}': {e}", exc_info=True)
             return Response({"error": MSG.ERR_SOMETHING_WRONG}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    # BUG FIX: author had no way to delete their own blog — delete method was missing entirely
+    def delete(self, request, slug):
+        blog = self._get_blog(slug, request.user)
+        if not blog:
+            return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+        blog.delete()
+        return Response({"message": MSG.BLOG_DELETED}, status=status.HTTP_200_OK)
+
 
 # ── Admin Blog Views ──────────────────────────────────────────────────────────
 
 class AdminBlogListView(PaginationMixin, APIView):
-    "admin sees ALL blogs (published + drafts), paginated"
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
@@ -319,7 +305,6 @@ class AdminBlogListView(PaginationMixin, APIView):
 
 
 class AdminBlogDetailView(APIView):
-    "admin can hard-delete any blog by its id"
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def delete(self, request, blog_id):
@@ -327,14 +312,12 @@ class AdminBlogDetailView(APIView):
         if not blog:
             return Response({"error": MSG.ERR_BLOG_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
         blog.delete()
-        # BUG FIX: original code had hasattr(MSG, 'BLOG_DELETED') guard which is wrong —
-        # MSG.BLOG_DELETED does not exist in messages.py so it always fell to the fallback string.
-        # Removed the guard and use a direct string message.
-        return Response({"message": "Blog deleted successfully"}, status=status.HTTP_200_OK)
+        # BUG FIX: MSG.BLOG_DELETED was used but not defined in messages.py
+        # Now added to messages.py — no more hasattr guard needed
+        return Response({"message": MSG.BLOG_DELETED}, status=status.HTTP_200_OK)
 
 
 class AdminBlogMigrateTopicView(APIView):
-    "admin can move a blog from one topic to another"
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def patch(self, request, blog_id):
@@ -352,8 +335,8 @@ class AdminBlogMigrateTopicView(APIView):
         blog.save(update_fields=["topic"])
         return Response(
             {
-                "message": MSG.BLOG_MIGRATED,
-                "blog_id": blog.id,
+                "message":   MSG.BLOG_MIGRATED,
+                "blog_id":   blog.id,
                 "old_topic": old_topic_name,
                 "new_topic": new_topic.name,
             },
@@ -364,7 +347,6 @@ class AdminBlogMigrateTopicView(APIView):
 # ── Comment Views ─────────────────────────────────────────────────────────────
 
 class CommentListCreateView(PaginationMixin, APIView):
-    "GET is public (paginated comments), POST requires login"
 
     def get_authenticators(self):
         if self.request.method == "GET":
@@ -377,7 +359,6 @@ class CommentListCreateView(PaginationMixin, APIView):
         return [IsAuthenticated()]
 
     def get(self, request, slug):
-        "returns non-deleted comments for a blog, newest first, paginated"
         try:
             blog = Blog.objects.filter(slug=slug, is_published=True).first()
             if not blog:
@@ -405,14 +386,12 @@ class CommentListCreateView(PaginationMixin, APIView):
 
 
 class CommentDeleteView(APIView):
-    "soft-delete: sets is_deleted=True instead of removing the row from DB"
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, comment_id):
         comment = Comment.objects.filter(id=comment_id, is_deleted=False).first()
         if not comment:
             return Response({"error": MSG.ERR_COMMENT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
-        # only the comment owner or an admin is allowed to delete a comment
         if comment.user != request.user and getattr(request.user, "role", None) != "admin":
             return Response({"error": MSG.ERR_PERMISSION_DENIED}, status=status.HTTP_403_FORBIDDEN)
         comment.is_deleted = True
@@ -420,9 +399,9 @@ class CommentDeleteView(APIView):
         return Response({"message": MSG.COMMENT_DELETED}, status=status.HTTP_200_OK)
 
 
-#Notification Views
+# Notification
+
 class NotificationListView(PaginationMixin, APIView):
-    "returns the logged-in user's notifications, newest first, paginated"
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -440,7 +419,6 @@ class NotificationListView(PaginationMixin, APIView):
 
 
 class NotificationMarkReadView(APIView):
-    "marks a single notification as read for the currently logged-in user"
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, notification_id):
