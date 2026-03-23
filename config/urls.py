@@ -9,7 +9,7 @@ from apps.blogs.urls import blogs_urlpatterns
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/users/", include(users_urlpatterns)),
+    path("api/",   include(users_urlpatterns)),
     path("api/", include(blogs_urlpatterns)),
 ]
 
