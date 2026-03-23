@@ -10,7 +10,7 @@ from apps.blogs.urls import blogs_urlpatterns
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/users/", include(users_urlpatterns)),
-    path("api/blogs/", include(blogs_urlpatterns)),
+    path("api/", include(blogs_urlpatterns)),
 ]
 
 if settings.DEBUG:

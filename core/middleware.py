@@ -57,7 +57,8 @@ class RequestLoggerMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request._request_id = uuid.uuid4().hex[:8].upper()
+        request._request_id  = uuid.uuid4().hex[:8].upper()
+        request._cached_body = request.body  # cache before DRF consumes it
 
         start    = time.monotonic()
         response = self.get_response(request)

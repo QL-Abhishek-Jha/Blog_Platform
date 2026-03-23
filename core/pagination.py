@@ -8,9 +8,9 @@ logger = logging.getLogger("api")
 class StandardPagination(PageNumberPagination):
     "global pagination: 10 items per page by default, max 100 per page"
 
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
+    page_size = 10 # 10 per page
+    page_size_query_param = "page_size"   ## ?page_size=5 to override
+    max_page_size = 100 #can never exceed 100 per page
 
     def paginate_queryset(self, queryset, request, view=None):
         "call parent logic then log the result so we can monitor heavy queries"

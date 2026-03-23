@@ -1,5 +1,3 @@
-import logging
-
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,39 +21,16 @@ from .serializers import (
     AdminUserUpdateSerializer,
 )
 from core.permissions import IsAdminUser
-from core.pagination import StandardPagination
 from core.messages import MSG
 
 User   = get_user_model()
-logger = logging.getLogger("apps")
 
-
-# ── Pagination Mixin ──────────────────────────────────────────────────────────
-class PaginationMixin:
-    pagination_class = StandardPagination
-
-    @property
-    def paginator(self):
-        if not hasattr(self, "_paginator"):
-            self._paginator = self.pagination_class()
-        return self._paginator
-
-    def paginate_queryset(self, queryset):
-        return self.paginator.paginate_queryset(queryset, self.request, view=self)
-
-    def get_paginated_response(self, data):
-        return self.paginator.get_paginated_response(data)
-
-
-# ── Helper ────────────────────────────────────────────────────────────────────
 
 def _blacklist_all_user_tokens(user):
     tokens = OutstandingToken.objects.filter(user=user)
     for token in tokens:
         BlacklistedToken.objects.get_or_create(token=token)
 
-
-# ── Auth Views ────────────────────────────────────────────────────────────────
 
 class UserRegistrationView(APIView):
     authentication_classes = []
@@ -66,7 +41,6 @@ class UserRegistrationView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         user = serializer.save()
-        logger.info(f"New user registered: {user.email}")
         return Response(
             {"message": MSG.REGISTERED, "user_id": user.id},
             status=status.HTTP_201_CREATED,
@@ -80,12 +54,9 @@ class UserLoginView(APIView):
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         if not serializer.is_valid():
-            email = request.data.get("email", "unknown")
-            logger.warning(f"Failed login attempt for email: {email}")
             return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
         user    = serializer.validated_data["user"]
         refresh = RefreshToken.for_user(user)
-        logger.info(f"User logged in: {user.email} | role: {user.role}")
         return Response(
             {
                 "message":       MSG.LOGIN,
@@ -113,7 +84,6 @@ class TokenRefreshView(APIView):
                 return Response({"error": MSG.ERR_USER_NOT_FOUND}, status=status.HTTP_401_UNAUTHORIZED)
             old_refresh.blacklist()
             new_refresh = RefreshToken.for_user(user)
-            logger.info(f"Token refreshed for user: {user.email}")
             return Response(
                 {
                     "message":       MSG.TOKEN_REFRESHED,
@@ -124,7 +94,6 @@ class TokenRefreshView(APIView):
                 status=status.HTTP_200_OK,
             )
         except TokenError:
-            logger.warning("Expired token refresh attempt")
             return Response(
                 {"error": MSG.ERR_TOKEN_EXPIRED, "code": "token_expired"},
                 status=status.HTTP_401_UNAUTHORIZED,
@@ -141,7 +110,6 @@ class UserLogoutView(APIView):
         try:
             token = RefreshToken(refresh_token)
             token.blacklist()
-            logger.info(f"User logged out: {request.user.email}")
         except TokenError:
             return Response({"error": MSG.ERR_TOKEN_INVALID}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message": MSG.LOGOUT}, status=status.HTTP_200_OK)
@@ -156,12 +124,10 @@ class ChangePasswordView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         user = request.user
         if not user.check_password(serializer.validated_data["old_password"]):
-            logger.warning(f"Wrong old password attempt by: {user.email}")
             return Response({"error": MSG.ERR_WRONG_PASSWORD}, status=status.HTTP_400_BAD_REQUEST)
         user.set_password(serializer.validated_data["new_password"])
         user.save()
         _blacklist_all_user_tokens(user)
-        logger.info(f"Password changed for user: {user.email} — all sessions blacklisted")
         return Response({"message": MSG.PASSWORD_CHANGED}, status=status.HTTP_200_OK)
 
 
@@ -174,7 +140,6 @@ class ForgotPasswordView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         email = request.data.get("email", "unknown")
-        logger.info(f"Password reset requested for email: {email}")
         return Response({"message": MSG.FORGOT_PASSWORD}, status=status.HTTP_200_OK)
 
 
@@ -192,11 +157,8 @@ class ResetPasswordView(APIView):
         user = serializer.validated_data["user"]
         user.set_password(serializer.validated_data["password"])
         user.save()
-        logger.info(f"Password reset successfully for user: {user.email}")
         return Response({"message": MSG.PASSWORD_RESET}, status=status.HTTP_200_OK)
 
-
-# ── Profile Views ─────────────────────────────────────────────────────────────
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -210,7 +172,6 @@ class UserProfileView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
-        logger.info(f"Profile updated for user: {request.user.email}")
         return Response(
             {"message": MSG.PROFILE_UPDATED, "data": serializer.data},
             status=status.HTTP_200_OK,
@@ -224,7 +185,6 @@ class UserProfileView(APIView):
             return Response({"error": MSG.ERR_INCORRECT_PASSWORD}, status=status.HTTP_400_BAD_REQUEST)
         email = request.user.email
         request.user.delete()
-        logger.info(f"Account permanently deleted: {email}")
         return Response({"message": MSG.ACCOUNT_DELETED}, status=status.HTTP_200_OK)
 
 
@@ -240,8 +200,6 @@ class PublicAuthorProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# ── Subscription Views ────────────────────────────────────────────────────────
-
 class SubscribeAuthorView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -254,7 +212,6 @@ class SubscribeAuthorView(APIView):
         if Subscription.objects.is_subscribed(subscriber=request.user, author=author):
             return Response({"error": MSG.ERR_ALREADY_SUBSCRIBED}, status=status.HTTP_400_BAD_REQUEST)
         Subscription.objects.create(subscriber=request.user, author=author)
-        logger.info(f"User {request.user.email} subscribed to author {author.email}")
         return Response({"message": MSG.SUBSCRIBED}, status=status.HTTP_201_CREATED)
 
 
@@ -269,34 +226,23 @@ class UnsubscribeAuthorView(APIView):
         if not subscription:
             return Response({"error": MSG.ERR_NOT_SUBSCRIBED}, status=status.HTTP_400_BAD_REQUEST)
         subscription.delete()
-        logger.info(f"User {request.user.email} unsubscribed from author {author.email}")
         return Response({"message": MSG.UNSUBSCRIBED}, status=status.HTTP_200_OK)
 
 
-class MySubscriptionsView(PaginationMixin, APIView):
+class MySubscriptionsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         subscriptions = Subscription.objects.filter(subscriber=request.user).select_related("author")
-        page = self.paginate_queryset(subscriptions)
-        if page is not None:
-            serializer = SubscriptionSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = SubscriptionSerializer(subscriptions, many=True)
+        serializer    = SubscriptionSerializer(subscriptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# ── Admin User Views ──────────────────────────────────────────────────────────
-
-class AdminUserListView(PaginationMixin, APIView):
+class AdminUserListView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
-        users = User.objects.all()
-        page = self.paginate_queryset(users)
-        if page is not None:
-            serializer = AdminUserSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        users      = User.objects.all()
         serializer = AdminUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -334,7 +280,6 @@ class AdminUserDetailView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         user.refresh_from_db()
-        logger.info(f"Admin {request.user.email} updated user {user.email} — role: {user.role} | active: {user.is_active}")
         return Response(
             {"message": MSG.USER_UPDATED, "data": AdminUserSerializer(user).data},
             status=status.HTTP_200_OK,
@@ -349,5 +294,4 @@ class AdminUserDetailView(APIView):
             return guard
         email = user.email
         user.delete()
-        logger.info(f"Admin {request.user.email} deleted user {email}")
         return Response({"message": MSG.USER_DELETED}, status=status.HTTP_200_OK)

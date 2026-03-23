@@ -36,12 +36,11 @@ def safe_request_body(request) -> dict:
     }
     body: dict = {}
     try:
-        if hasattr(request, "data") and request.data:
-            raw = dict(request.data)
-        elif request.body:
-            raw = json.loads(request.body.decode("utf-8"))
-        else:
+        # Use _cached_body set by middleware before DRF consumes request.body
+        raw_bytes = getattr(request, "_cached_body", None) or request.body
+        if not raw_bytes:
             return {}
+        raw = json.loads(raw_bytes.decode("utf-8"))
         for key, value in raw.items():
             if key.lower() in _SENSITIVE:
                 body[key] = "***REDACTED***"
